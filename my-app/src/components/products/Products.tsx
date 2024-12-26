@@ -5,6 +5,9 @@ import ProductsFilters from './ProductsFilters';
 import ProductComponent from './ProductComponent';
 import './Products.css';
 import PriceRange from './PriceRange';
+import useAxiosWithIntercepter from '../../helpers/jwtintercepters';
+import axios from 'axios';
+import Slider from '@mui/material/Slider';
 
 interface ProductData {
     id: number, 
@@ -74,61 +77,75 @@ export interface ProductsFilter {
 
 const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
-    const [search, setSearch] = useState<ProductsFilter['search']>();
-    const [data, setData] = useState<Array<ProductData>>(PRODUCT_DATA);
+    const [search, setSearch] = useState<ProductsFilter['search']>('');
+    const [data, setData] = useState<Array<ProductData>>();
 
-    const [category, setCategory] = useState<ProductsFilter['category']>('all');
-    const [minVal, setMinVal] = useState<number>();
-    const [maxVal, setMaxVal] = useState<number>();
+    const [category, setCategory] = useState(searchParams.get('category'));
+    const [loading, setLoading] = useState(false);
+    const [min, setMin] = useState();
+    const [max, setMax] = useState();
 
-    let filteredData = data;
+    const [filters, setFilters] = useState({
+      price_min: 0,
+      price_max: 10000,
+      quantity_min: 0,
+      quantity_max: 30000,
+      search: search,
+      category: category,
+    });
+
+    const handleFilterChange = (key, value) => {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        [key]: value,
+      }));
+    };
+
+    const axiosInstance = useAxiosWithIntercepter();
+
+    const filteredData = data;
 
     useEffect(()=>{
-      if (data){
-        setMinVal(filteredData.reduce((minPrice, currentProduct)=> (currentProduct.price < minPrice ? currentProduct.price : minPrice), data[0].price));
-        setMaxVal(filteredData.reduce((maxPrice, currentProduct)=> (currentProduct.price > maxPrice ? currentProduct.price : maxPrice), data[0].price));
-      }
-    }, [data]);
-    
-    if (search){
-      filteredData = filteredData.filter(product=>{
-        const searchLowered = search.toLowerCase();
-        return product.name.toLowerCase().includes(searchLowered) || product.category.toLowerCase().includes(searchLowered);
-      });
-    };
+      const fetchProducts = async () => {
+        try {
+          setLoading(true);
+          console.log(filters)
+          const response = await axiosInstance.get('http://127.0.0.1:8000/products', {
+            params: filters
+          });
+          setData(response.data);
+          console.log(response.data);
+        } catch (error) {
+          //react-toasts should show messages
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchProducts();
+    },[filters]);
+
+    console.log(category, filters, search)
+
 
     useEffect(()=>{
         const analyzeParams = (searchParams: any) => {
             if (searchParams.get('category')){
-                setCategory(searchParams.get('category'));
+              handleFilterChange('category', searchParams.get('category'))
+              setCategory(searchParams.get('category'));
             }else{
-                setCategory('all');
+              setCategory('');
+              handleFilterChange('category', '');
             }
         };
         analyzeParams(searchParams);
     },[searchParams]);
 
-    const handleFilterClick = (event: any) => {
-      setCategory(event.currentTarget.id);
-    };
 
-    if (category && category!='all'){
-      if (category=='others'){
-        filteredData = filteredData.filter(product=>{
-          return product.category.toLowerCase() != 'fruits' && product.category.toLowerCase() != 'vegetables' && product.category.toLowerCase() != 'crops';
-        });
-      }else{
-        filteredData = filteredData.filter(product=>{
-          return product.category.toLowerCase().includes(category);
-        });
-      }
-    };
-
-    if (minVal && maxVal){
-      filteredData = filteredData.filter(product=>{
-        return minVal <= product.price && product.price <= maxVal;
-      });
-    };
+    function handleSearch(search: string){
+      setSearch(search);
+      handleFilterChange('search', search);
+      //handleFilterChange('description', search);
+    }
 
     return (
         <div className='w-full p-16 text-gray-700'>
@@ -137,19 +154,38 @@ const Products = () => {
             <div className=''>
               <p className='font-semibold text-lg mb-2'>Categories</p>
               <ul className='flex flex-col items-start gap-5 text-gray-600'>
-                  <Link id={`all`} onClick={handleFilterClick} to={'/products'}><li className={`w-48 pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${category==='all' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>All</li></Link>
-                  <Link id={`fruits`} onClick={handleFilterClick} to={'/products?category=fruits'}><li className={`w-48 pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${category==='fruits' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>Fruits</li></Link>
-                  <Link id={`vegetables`} onClick={handleFilterClick} to={'/products?category=vegetables'}><li className={`w-48 pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${category==='vegetables' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>Vegetables</li></Link>
-                  <Link id={`crops`} onClick={handleFilterClick} to={'/products?category=crops'}><li className={`w-48 pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${category==='crops' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>Crops</li></Link>
-                  <Link id={`others`} onClick={handleFilterClick} to={'/products?category=others'}><li className={`w-48 pl-3 py-1.5 pr-16 last-of-type:mb-4 border border-gray-300 rounded transition-all cursor-pointer ${category==='others' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>Others</li></Link>
+                  <Link id={`all`}  to={'/products'}><li className={`w-48 pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${category==='' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>All</li></Link>
+                  <Link id={`fruits`} to={'/products?category=fruits'}><li className={`w-48 pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${category==='fruits' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>Fruits</li></Link>
+                  <Link id={`vegetables`} to={'/products?category=vegetables'}><li className={`w-48 pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${category==='vegetables' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>Vegetables</li></Link>
+                  <Link id={`crops`}  to={'/products?category=crops'}><li className={`w-48 pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${category==='crops' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>Crops</li></Link>
+                  <Link id={`others`}  to={'/products?category=others'}><li className={`w-48 pl-3 py-1.5 pr-16 last-of-type:mb-4 border border-gray-300 rounded transition-all cursor-pointer ${category==='others' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>Others</li></Link>
               </ul>
-              {minVal && maxVal && <PriceRange priceGap={10} minVal={minVal} maxVal={maxVal} changeMin={setMinVal} changeMax={setMaxVal}/>}
+              {filters.price_min && filters.price_max && (
+                <>
+                  <>
+            <p className="font-semibold text-lg mb-2">Price</p>
+            <div>
+                <div className="flex justify-between items-center">
+                  <p>{`${minVal}`}</p>
+                  <p>{`${maxVal}`}</p>
+                </div>
+                <Slider
+                  getAriaLabel={() => 'Temperature range'}
+                  value={value}
+                  onChange={handleChange}
+                  valueLabelDisplay="auto"
+                  getAriaValueText={valuetext}
+                />
+            </div>
+        </>
+                </>
+              )}
             </div>
             <div className='flex flex-col gap-4'>
-              <ProductsFilters onChange={(filters)=>{setSearch(filters.search);}}/>
+              <ProductsFilters onChange={(filters)=>{handleSearch(filters.search);}}/>
               <div className='w-full grid grid-cols-4 gap-4 gap-y-6 '>
-                {filteredData.length>0 && filteredData.map(productData=><ProductComponent {...productData} />)}
-                {filteredData.length==0 && <p>No relevent data found!</p>}
+                {data && data.length>0 && data.map(productData=><ProductComponent {...productData} imageUrl={productData['image_urls'][0]} />)}
+                {data && data.length==0 && <p>No relevent data found!</p>}
               </div>
             </div>
           </div>

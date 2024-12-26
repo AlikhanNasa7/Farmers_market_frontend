@@ -1,0 +1,242 @@
+.cartitems{
+    width: 80%;
+}
+.cartitems-format-main{
+    display: grid;
+    grid-template-columns: 0.8fr 2fr 1fr 1fr 1fr 1fr;
+    gap:50px;
+    align-items: center;
+    list-style: none;
+    padding: 20px 0px;
+    color: #454545;
+    font-size: 18px;
+    font-weight: 600;
+}
+.cartitems-main{
+    margin-bottom: 120px;
+}
+.cartitems-item{
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.cartitems-item img:first-of-type{
+    height: 62px;
+    max-width: 100%;
+}
+
+.cartitems-item img:last-of-type{
+    margin: 0px 30px;
+    cursor: pointer;
+}
+
+.cartitems-quantity{
+    width: 80px;
+    height: 40px;
+    border: 2px solid #ebebeb;
+    background-color: white;
+}
+
+.cartitems-down{
+    display: flex;
+    gap: 40px;
+}
+.cartitems-down>*{
+    flex:1;
+}
+
+.cartitems-total-action{
+    color: white;
+    background-color: #ff4141;
+    padding: 15px 25px;
+    border:0;
+    font-size: 16px;
+    font-weight: 600;
+    width: 240px;
+    border-radius: 10px;
+    margin-top: 2rem;
+}
+
+.cartitems-total-item{
+    display: flex;
+    justify-content: space-between;
+}
+
+.cartitems-total-item-bold{
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+}
+
+.cartitems-total{
+    display: flex;
+    max-width: 90%;
+    flex-direction: row-reverse;
+    gap:50px;
+}
+
+.cartitems-total>div{
+    display: flex;
+    flex-direction: column;
+    gap:15px;
+}
+
+.cartitems-promocode{
+    display: flex;
+    justify-content: center;
+}
+
+.cartitems-promocode-content>p{
+    font-size: 16px;
+    color: #616161;
+    margin-bottom: 10px;
+}
+.cartitems-promocode-action{
+    width: 500px;
+    margin-top: 15px;
+    padding-left: 20px;
+    background-color: #eaeaea;
+}
+.cartitems-promocode-action input{
+    border: 0;
+    outline:0;
+    background: transparent;
+    font-size: 16px;
+    width: 330px;
+    height: 50px;
+}
+
+.cartitems-promocode-action button{
+    width: 150px;
+    height: 50px;
+    background-color: black;
+    cursor: pointer;
+    color: white;
+    font-size: 16px;
+    border: none;
+}
+
+.removebutton{
+    margin: auto;
+}
+
+.cartitems-plus, .cartitems-minus{
+    width: 30%;
+    font-size: large;
+    margin-top: 5px;
+    padding: 0;
+}
+
+@media (max-width:1280px) {
+    .cartitems{
+        width: 90%;
+    }
+    .cartitems-quantity{
+        width: 40px;
+        height: 30px;
+    }
+}
+
+@media (max-width:1024px) {
+    .cartitems{
+        width: 90%;
+    }
+    .cartitems-quantity{
+        width: 40px;
+        height: 30px;
+    }
+    .cartitems-promocode-action{
+        width: 360px;
+        height: 50px;
+    }
+    .cartitems-promocode-action input{
+        width: 200px;
+    }
+    .cartitems-promocode-action button{
+        width: 140px;
+    }
+}
+
+@media (max-width:800px) {
+    .cartitems-quantity{
+        width: 40px;
+        height: 30px;
+    }
+    .cartitems-promocode-action{
+        width: 300px;
+        height: 50px;
+    }
+    .cartitems-promocode-action input{
+        width: 180px;
+    }
+    .cartitems-promocode-action button{
+        width: 100px;
+    }
+    .cartitems-format-main li{
+        font-size: 14px;
+    }
+    .cartitems-total-action{
+        width: 200px;
+        padding: 15px 20px;
+        font-size: 12px;
+    }
+    .cartitems-total{
+        font-size: 14px;
+    }
+    .cartitems h1{
+        font-size: 24px;
+    }
+}
+
+@media (max-width:640px) {
+    .cartitems-quantity{
+        width: 40px;
+        height: 30px;
+    }
+    .cartitems-promocode-action{
+        height: 50px;
+        width: 100%;
+    }
+    .cartitems-promocode-content{
+        width: 100%;
+    }
+    .cartitems-promocode-action input{
+        width: 60%;
+    }
+    .cartitems-promocode-action button{
+        width: 40%;
+    }
+    .cartitems-format-main li, .cartitems-item {
+        font-size: 12px;
+    }
+    .cartitems-format-main{
+        gap:10px;
+    }
+    .cartitems-down{
+        flex-direction: column;
+        margin-bottom: 100px;
+    }
+    .cartitems-promocode{
+        justify-content: start;
+        width: 90%;
+    }
+
+    .cartitems-total-item, .cartitems-total-item-bold{
+        font-size: 16px;
+    }
+}
+
+@media (max-width:560px) {
+    .cartitems-format-main{
+        display: none;
+    }
+    .cartitems-item{
+        display: grid;
+        grid-template-columns: 0.5fr 3fr 0.5fr;
+        gap:20px;
+        font-size: 16px;
+    }
+    .cartitem-price{
+        text-align: center;
+    }
+}

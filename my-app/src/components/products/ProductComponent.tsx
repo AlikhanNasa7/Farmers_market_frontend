@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Dot } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const ProductComponent = ({id, name, description, price, category, imageUrl, availableQuantity}: {id: number, name: string, description: string, price: number, category: string, imageUrl: string, availableQuantity: number}) => {
+const ProductComponent = ({product_id, name, description, price, category, imageUrl, availableQuantity}: {product_id: string, name: string, description: string, price: number, category: string, imageUrl: string, availableQuantity: number}) => {
 
   const navigate = useNavigate();
 
@@ -13,9 +13,11 @@ const ProductComponent = ({id, name, description, price, category, imageUrl, ava
     event.stopPropagation(); // Stops the event from bubbling up to the parent
     navigate('/top-products');
   };
+
+  console.log(imageUrl);
   
   return (
-    <Link to={`/products/${id}`} className='border border-gray-300 rounded-md background-white flex flex-col overflow-hidden justify-center items-center'>
+    <Link to={`/products/${product_id}`} className='border border-gray-300 rounded-md background-white flex flex-col overflow-hidden justify-center items-center'>
       <div className='relative w-full h-full'>
         <img src={imageUrl} alt={description} className='w-full h-full'/>
         <div 
@@ -29,6 +31,7 @@ const ProductComponent = ({id, name, description, price, category, imageUrl, ava
           <span className="text-sm text-green-500">Available</span>
         </div>
         <div className="font-bold text-xl mb-1">{name}</div>
+        <p className='font-bold text-sm mb-1 text-gray-400'>{description}</p>
         <p className="text-gray-700 text-base">Price : {price}</p>
         <div className='flex -translate-x-2 text-sm font-bold text-gray-500 items-center'>
           <Dot/>

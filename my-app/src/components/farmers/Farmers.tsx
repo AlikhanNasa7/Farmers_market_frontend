@@ -3,6 +3,8 @@ import FarmerComponent from './FarmerComponent';
 import { useParams } from 'react-router';
 import { Link, useSearchParams } from 'react-router-dom';
 import { FarmerData } from './types';
+import axios from 'axios';
+import useAxiosWithIntercepter from '../../helpers/jwtintercepters';
 const FARMER_DATA: Array<FarmerData> = [
   {
     "id": 1,
@@ -74,10 +76,14 @@ const FARMER_DATA: Array<FarmerData> = [
 
 const Farmers = () => {
 
+  const [loading, setLoading] = useState(false);
+
   const [params, setParams] = useSearchParams();
   const region = params.get('region');
   const [data, setData] = useState<Array<FarmerData>>(FARMER_DATA);
   const [filter, setFilter] = useState<string>('filter-1');
+
+  const axiosInstance = useAxiosWithIntercepter();
 
   const getUpperCase = (input: string) => {
     return input.charAt(0).toUpperCase() + input.slice(1);
@@ -89,7 +95,7 @@ const Farmers = () => {
     }
     return FARMER_DATA
   }, [region, FARMER_DATA]);
-  
+
   useEffect(()=>{
     setData(filteredData);
   },[filteredData]);
@@ -97,6 +103,19 @@ const Farmers = () => {
   const handleFilterClick = (event: any) => {
     setFilter(event.currentTarget.id);
   };
+
+  useEffect(()=>{
+    const fetchFarmers = async () => {
+      const response = await axiosInstance.get(
+        "http://127.0.0.1:8000/user/farmers"
+      );
+
+      const data = response.data;
+      console.log(data);
+      setData(data);
+    }
+    fetchFarmers();
+  },[]);
 
 
   return (
@@ -112,7 +131,7 @@ const Farmers = () => {
                 <Link id={`filter-6`} onClick={handleFilterClick} to={'/farmers?region=karaganda'}><li className={`w-48 pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${filter==='filter-6' ? 'bg-[#475be8] text-white' : 'bg-white'}`}>Karaganda</li></Link>
             </ul>
             <div className='w-full grid grid-cols-4 gap-4 gap-y-6 '>
-              {data && data.map(farmerData=><FarmerComponent id={farmerData["id"]} name={farmerData["name"]} location={farmerData["location"]} farmSize={farmerData["farmSize"]} crops={farmerData["crops"]} contact={farmerData["contact"]} imageUrl={farmerData["imageUrl"]} description={farmerData["description"]}/>)}
+              {data && data.map(farmerData=><FarmerComponent image={farmerData["image"]} id={farmerData["user"]} first_name={farmerData["first_name"]} last_name={farmerData["last_name"]} total_farm_area={farmerData["total_farm_area"]} specialization={farmerData["specialization"]} contact={farmerData["years_of_experience"]} />)}
             </div>
         </div>
     </div>

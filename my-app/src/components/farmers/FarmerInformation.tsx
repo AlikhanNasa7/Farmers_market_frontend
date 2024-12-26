@@ -5,27 +5,28 @@ import profile_photo from './profile_photo.jpg';
 import { Inbox, Phone } from 'lucide-react';
 import farm_photo from './farm.jpg';
 
-const FarmerInformation = () => {
+const FarmerInformation = ({farmer, farms}) => {
     const farmerContext = useContext(FarmerContext);
 
-  if (!farmerContext) {
-    throw new Error("FarmerInformation must be used within FarmerContextProvider");
-  }
+    if (!farmerContext) {
+        throw new Error("FarmerInformation must be used within FarmerContextProvider");
+    }
 
-  const { farmerData } = farmerContext;
+    console.log(farmer, farms)
 
-  if (!farmerData) {
-    return <div>Loading...</div>;
-  }
+  
+//   const { farmerData } = farmerContext;
 
-  const { id, name, location, description, farmSize, crops, contact } = farmerData;
-    
+//   if (!farmerData) {
+//     return <div>Loading...</div>;
+//   }
+
   return (
     <div className='w-full pt-16 pl-16 text-gray-700 flex justify-between h-[80%]'>
             <div className='w-[47%] p-4 border-gray-300'>
                 <div className='border border-gray-300 rounded-2xl background-white flex flex-col overflow-hidden justify-center items-center'>
                     <div className='relative'>
-                        <img src={profile_photo} alt="" className='w-full h-full'/>
+                        <img src={farmer.image} alt="" className='w-full h-full'/>
                         <span className='absolute top-2 left-2 text-gray-300'>Top Farmer</span>
                         <span className='absolute bottom-2 right-4 text-2xl text-white'>Rank</span>
                     </div>
@@ -36,17 +37,16 @@ const FarmerInformation = () => {
                                     <span className="h-5 w-5 bg-green-500 rounded-full mr-2"></span>
                                     <span className="text-xl text-green-500">Available</span>
                                 </div>
-                                <div className="font-bold text-2xl">{name}</div>
-                                <p className="text-gray-700 text-xl">{location}</p>
+                                <div className="font-bold text-2xl">{`${farmer.first_name} ${farmer.last_name}`}</div>
                                 <div className='flex text-sm font-bold text-gray-500 items-center'>
-                                    <p className='text-base'>{description}</p>
+                                    <p className='text-base'>{farmer.description}</p>
                                 </div>
                             </div>
                         </div>
                         <div className='w-[40%] p-4 bg-white  text-lg flex flex-col justify-center'>
                                 <div className="flex justify-between py-2">
                                     <span className="text-gray-600">Experience</span>
-                                    <span className="text-orange-500 font-semibold">15 years</span>
+                                    <span className="text-orange-500 font-semibold">{farmer.years_of_experience} years</span>
                                 </div>
                                 <div className="flex justify-between py-2">
                                     <span className="text-gray-600">Sales</span>
@@ -75,7 +75,7 @@ const FarmerInformation = () => {
                         <span className="text-gray-500 text-sm">Location</span>
                         <div className="flex items-center mt-1">
                         <svg className="h-5 w-5 mr-2 text-gray-500" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 00-7 7c0 4 7 11 7 11s7-7 7-11a7 7 0 00-7-7zm0 9a2 2 0 110-4 2 2 0 010 4z"/></svg>
-                        <span>{location}</span>
+                        {/* <span>{farms[0].farm_location}</span> */}
                         <a href="https://2gis.kz/almaty/geo/9430021605163016?m=76.928742%2C43.138189%2F11.8" target='_blank' className="text-red-500 ml-2">Open in Map</a>
                         </div>
                     </div>
@@ -85,39 +85,45 @@ const FarmerInformation = () => {
                         <div className="flex items-center mt-1 gap-4">
                             <div className='flex gap-2'>
                                 <Inbox/>
-                                <a href={`mailto:${contact.email}`}>{contact.email}</a>
+                                <a href={`mailto:${farmer.user}`}>{farmer.user}</a>
                             </div>
-                            <div className='flex gap-2'>
+                            {/* <div className='flex gap-2'>
                                 <Phone/>
                                 <a href={`tel:${contact.phone}`}>{contact.phone}</a>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
-                    <h2 className="text-2xl font-semibold my-8 mb-4">Farm Information</h2>
-                    <div className='w-[90%] border border-gray-300 rounded-2xl background-white flex flex-col overflow-hidden justify-center items-center'>
-                        <div className='relative w-full'>
-                            <img src={farm_photo} alt="" className='w-full h-full'/>
-                        </div>
-                        <div className='w-full border border-gray-300 rounded-b-lg overflow-hidden flex items-stretch'>
-                            <div className='w-[60%] border-r-2 border-gray-300'>
-                                <div className="py-4 px-4 w-full flex flex-col gap-2">
-                                    <p className="text-gray-700 text-2xl">{location}</p>
-                                    <div className='flex text-sm font-bold text-gray-500 items-center'>
-                                        <p className='text-base'>{description}</p>
+                    <h2 className="text-2xl font-semibold my-8 mb-4">Farms Information</h2>
+                    <div className='w-[90%] background-white flex flex-col overflow-hidden justify-center items-center'>
+                        {farms && farms.map((farm, index)=> (
+                            <div className='w-full border-gray-300 rounded-2xl mb-6'>
+                                <h3 className='text-2xl font-bold mb-1'>Farm {index+1}</h3>
+                                <div className='relative w-full'>
+                                    <img src={Array.isArray(farm.image_urls) && farm.image_urls[0]} alt="" className='w-full h-full'/>
+                                </div>
+                                <div className='w-full border border-gray-300 rounded-b-lg overflow-hidden flex items-stretch'>
+                                    <div className='w-[60%] border-r-2 border-gray-300'>
+                                        <div className="py-4 px-4 w-full flex flex-col gap-2">
+                                            <p className="text-gray-700 text-2xl">{farm.farm_location}</p>
+                                            <div className='flex text-sm font-bold text-gray-500 items-center'>
+                                                <p className='text-base'>{farm.description}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className='w-[40%] p-4 bg-white  text-lg flex flex-col justify-center'>
+                                            <div className="flex justify-between py-2">
+                                                <span className="text-gray-600">Size</span>
+                                                <span className="text-orange-500 font-semibold">{farm.farm_size}</span>
+                                            </div>
+                                            <div className="flex justify-between py-2">
+                                                <span className="text-gray-600">Rank</span>
+                                                <span className="text-green-500 font-semibold">4.8</span>
+                                            </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className='w-[40%] p-4 bg-white  text-lg flex flex-col justify-center'>
-                                    <div className="flex justify-between py-2">
-                                        <span className="text-gray-600">Size</span>
-                                        <span className="text-orange-500 font-semibold">{farmSize}</span>
-                                    </div>
-                                    <div className="flex justify-between py-2">
-                                        <span className="text-gray-600">Rank</span>
-                                        <span className="text-green-500 font-semibold">4.8</span>
-                                    </div>
-                            </div>
-                        </div>
+                            )
+                        )}
                     </div>
                 </div>
             </div>

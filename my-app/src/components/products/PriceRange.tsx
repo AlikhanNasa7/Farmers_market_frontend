@@ -1,28 +1,16 @@
 import React, {useState, MouseEvent, ChangeEvent, useEffect} from 'react';
-
+import ReactSlider from 'react-slider'
 
 const PriceRange = ({priceGap=5, minVal, maxVal, changeMax, changeMin}: {priceGap: number, minVal: number, maxVal: number, changeMin: any, changeMax: any}) => {
-    const [rangeStyle, setRangeStyle] = useState({ left: "0%", right: "0%" });
-    
-    const handleMinInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const value = parseInt(e.target.value);
-        if (value <= maxVal - priceGap) {
-          changeMin(value);
-        }
-      };
-    
-    const handleMaxInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (value >= minVal + priceGap) {
-        changeMax(value);
-    }
+
+    const [priceRange, setPriceRange] = useState([minVal, maxVal]);
+
+    const handleChange = (value) => {
+        const [min, max] = value;
+        changeMin(min);
+        changeMax(max);
+        setPriceRange(value);
     };
-
-    const min = 0;
-    const max = 0;
-
-    const leftPercent = ((minVal - min) / (max - min)) * 100;
-    const rightPercent = ((maxVal - min) / (max - min)) * 100;
 
     return (
         <>
@@ -32,34 +20,23 @@ const PriceRange = ({priceGap=5, minVal, maxVal, changeMax, changeMin}: {priceGa
                 <p>{`${minVal}`}</p>
                 <p>{`${maxVal}`}</p>
                 </div>
-                <div>
-                <div className="h-[5px] relative bg-[#ddd] rounded-[5px]">
-                    <div
-                        className="h-full absolute bg-[#17A2B8] rounded-[5px] left-[1/4] right-[1/4]"
-                        style={{ left: `${leftPercent}%`, right: `${100 - rightPercent}%` }}
-                    ></div>
-                </div>
-                <div className="relative">
-                    <input
-                        value={minVal}
-                        type="range"
-                        className={"absolute bg-none top-[-5px] h-[5px]"}
-                        min="0"
-                        max="550"
-                        step="1"
-                        onChange={handleMinInputChange}
-                    />
-                    <input
-                        value={maxVal}
-                        type="range"
-                        className={`absolute w-full bg-none top-[-5px] h-[5px] pointer-events-none border-none`}
-                        min="0"
-                        max="550"
-                        step="1"
-                        onChange={handleMaxInputChange}
-                    />
-                </div>
-                </div>
+                <ReactSlider
+                    min={0}
+                    max={1000}
+                    step={1}
+                    value={priceRange}
+                    onChange={handleChange}
+                    renderTrack={(props, state) => (
+                        <div {...props} className="bg-gray-300 h-2 rounded-md" />
+                    )}
+                    renderThumb={(props, state) => (
+                        <div {...props} className="w-6 h-6 bg-blue-600 rounded-full cursor-pointer border-2 border-blue-800" />
+                    )}
+                    className="slider"
+                    ariaLabel={['Lower thumb', 'Upper thumb']}
+                    thumbClassName="thumb"
+                    trackClassName="track"
+                />
             </div>
         </>
     )

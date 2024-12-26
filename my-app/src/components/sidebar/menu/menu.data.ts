@@ -1,4 +1,4 @@
-import { Home, LucideIcon, Book, Tractor, User, Banana, Settings, Mail, ListOrdered } from "lucide-react";
+import { Home, LucideIcon, Book, Tractor, User, Banana, Settings, Mail, ListOrdered, ShoppingCart } from "lucide-react";
 
 export interface IMenuItem {
     icon: LucideIcon, 
@@ -19,8 +19,8 @@ export const MENU: IMenuItem[] = [
     },
     {
         icon: User,
-        name: "Buyers",
-        link: "/buyers"
+        name: "Dashboard",
+        link: "/dashboard"
     },
     {
         icon: ListOrdered,
@@ -43,8 +43,9 @@ export const MENU: IMenuItem[] = [
         link: "/chats"
     },
     {
-        icon: Settings,
-        name: "Settings",
-        link: "/settings"
+        icon: ShoppingCart,
+        name: "ShoppingCart",
+        link: "/cart"
     }
 ]
+

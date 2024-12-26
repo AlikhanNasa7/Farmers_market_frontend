@@ -4,6 +4,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { DateRange } from "react-date-range";
 import './AreaTop.scss';
+import { Link } from 'react-router-dom';
 
 const AreaTop = () => {
 
@@ -49,7 +50,17 @@ const AreaTop = () => {
     return (
         <section className={'content-area-top'}>
             <div className="area-top-l">
-                <h2 className="area-top-title">Hello, <span className='area-top-title_name'>Zhibek</span></h2>
+                <div className='flex gap-8 items-center'>
+                    <h2 className="area-top-title">Hello, <span className='area-top-title_name'>Zhibek</span></h2>
+                    <div className='flex gap-4'>
+                        <div className=''>
+                            <Link to="/dashboard"><p className='text-blue-800'>My Dashboard</p></Link>
+                        </div>
+                        <div className='text-blue-800'>
+                            <Link to="/orders"><p>My Orders</p></Link>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div className="area-top-r">
                 <div

@@ -19,7 +19,16 @@ import Order from './components/orders/Order.tsx';
 import MyProducts from './components/dashboard/myproducts/MyProducts.tsx';
 import DashboardLayout from './components/dashboard/DashboardLayout.tsx';
 import AuthContextProvider from './contexts/AuthContext.tsx';
-
+import ProtectedRoute from './components/profile/ProtectedRoute.tsx';
+import PasswordReset from './components/auth/password-reset/PasswordReset.tsx';
+import PasswordResetConfirm from './components/auth/password-reset/PasswordResetConfirm.tsx';
+import ProductModal from './components/dashboard/myproducts/ProductModal.tsx';
+import ProductsLayout from './components/dashboard/myproducts/ProductsLayout.tsx';
+import FarmModal from './components/dashboard/myfarms/FarmModal.tsx';
+import ChatLayout from './components/chat/ChatLayout.tsx';
+import Chat from './components/chat/Chat.tsx';
+import Cart from './components/cart/Cart.tsx';
+import ShopContextProvider from './components/cart/ShopContext.tsx';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -31,7 +40,26 @@ const router = createBrowserRouter([
         children: [
           {
             path: "/",
-            element: <Home/>
+            element: <ProtectedRoute><Home/></ProtectedRoute>
+          },
+          {
+            path: "/chats",
+            element: <ProtectedRoute><ChatLayout/></ProtectedRoute>,
+            children: [
+              {
+                path:":channelId",
+                element: <Chat/>
+              }
+            ]
+          },
+          {
+            path: "/cart",
+            element: 
+            <ProtectedRoute>
+              <ShopContextProvider>
+                <Cart/>
+              </ShopContextProvider>
+            </ProtectedRoute>
           },
           {
             path: "/farmers",
@@ -64,7 +92,7 @@ const router = createBrowserRouter([
             children: [
               {
                 path: "",
-                element: <Orders/>
+                element: <ProtectedRoute><Orders/></ProtectedRoute>
               },
               {
                 path: ":orderId",
@@ -74,11 +102,23 @@ const router = createBrowserRouter([
           },
           {
             path: "/dashboard",
-            element: <DashboardLayout/>,
+            element: <ProtectedRoute><DashboardLayout/></ProtectedRoute>,
             children: [
               {
-                path: "myproducts",
-                element: <MyProducts/>,
+                path: "create-product",
+                element: <ProductModal/>
+              },
+              {
+                path: "update-product/:productId",
+                element: <ProductModal/>
+              },
+              {
+                path: "create-farm",
+                element: <FarmModal/>
+              },
+              {
+                path: "update-farm/:farmId",
+                element: <FarmModal/>
               }
             ]
           },
@@ -101,6 +141,14 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register/>
+  },
+  {
+    path: "/password-reset",
+    element: <PasswordReset/>
+  },
+  {
+    path: "/password-reset-confirm/:confirm_token",
+    element: <PasswordResetConfirm/>
   },
 ]);
 

@@ -7,7 +7,7 @@ import cn from "clsx";
 import profile_photo from './zhibek.jpeg';
 import { EllipsisVertical } from 'lucide-react';
 import { useAuthContext } from '../../contexts/AuthContext';
-
+import { useAuthService } from '../../services/AuthService';
 const Sidebar = () => {
 
     const {isLoggedIn} = useAuthContext();
@@ -17,6 +17,8 @@ const Sidebar = () => {
     const [isCanHover, setIsCanHover] = useState(true);
 
     const hoverTimeoutRef = useRef<number | null >(null);
+
+    const {user} = useAuthService()
 
     const toggleSidebar = () => {
         if (isCollapsed){

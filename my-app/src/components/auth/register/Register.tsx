@@ -1,13 +1,46 @@
 import React from 'react';
 import farmers_grinding from './farmers_grinding.jpeg';
 import classes from '../Login.module.scss';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useFormik, Field } from 'formik';
+import { useAuthContext } from '../../../contexts/AuthContext';
+import { Role, RegisterValues } from '../../../@types/auth-service';
+import * as Yup from "yup";
+
+const validationSchema = Yup.object({
+    role: Yup.string().required('Please select a role'),
+});
 
 const Register = () => {
+    const navigate = useNavigate();
+    const {register} = useAuthContext();
+
+    const formik = useFormik({
+        initialValues: {
+            email: "",
+            name: "",
+            surname: "",
+            role: null,
+            password: ""
+        },
+        validationSchema,
+        onSubmit: async (values: RegisterValues) => {
+            const {email, name, surname, role, password} = values;
+            const res = await register(email, name, surname, role, password);
+            if (res){
+                if (res.status===201){
+                    navigate("/login");
+                }else{
+                    
+                }
+            }
+        }
+    });
+    
     return (
         <div className='h-screen flex justify-center items-center'>
             <img src={farmers_grinding} alt="Farmer Happy" className='h-full w-[600px] rounded-r-xl object-cover'/>
-            <div className='py-4 px-6 w-[480px] bg-white rounded-3xl flex flex-col gap-8 m-auto '>
+            <form className='py-4 px-6 w-[480px] bg-white rounded-3xl flex flex-col gap-8 m-auto' onSubmit={formik.handleSubmit}>
                 <h2 className='text-2xl font-semibold'>Sign up to Alsat</h2>
                 <button className='bg-black py-4 px-4 rounded-3xl text-sm font-semibold flex justify-center items-center gap-4  border-2 text-white'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" role="img" className="icon">
@@ -30,6 +63,9 @@ const Register = () => {
                             <input
                                 type="text"
                                 id="name"
+                                name='name'
+                                onChange={formik.handleChange}
+                                value={formik.values.name}
                                 className="border border-gray-300 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-800"
                             />
                         </div>
@@ -40,20 +76,42 @@ const Register = () => {
                             <input
                                 type="text"
                                 id="surname"
+                                name='surname'
+                                onChange={formik.handleChange}
+                                value={formik.values.surname}
                                 className="border border-gray-300 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-800"
                             />
                         </div>
                     </div>
                     <div className="flex flex-col">
-                        <label htmlFor="username" className="text-gray-900 font-semibold mb-2">
-                            Username or Email
+                        <label htmlFor="email" className="text-gray-900 font-semibold mb-2">
+                            Email
                         </label>
                         <input
                             type="text"
-                            id="username"
+                            id="email"
+                            name='email'
+                            onChange={formik.handleChange}
+                            value={formik.values.email}
                             className="border border-gray-300 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-800"
                         />
                     </div>
+                    <div className="flex flex-col">
+                        <label htmlFor="role" className="text-gray-900 font-semibold mb-2">
+                            Role
+                        </label>
+                        <div className='flex gap-8' role="group" aria-labelledby="role">
+                            <label>
+                                <input className='p-2' type="radio" name="role" value="Farmer" checked={formik.values.role === 'Farmer'} onChange={formik.handleChange}/>
+                                Farmer
+                            </label>
+                            <label>
+                                <input type="radio" name="role" value="Buyer" checked={formik.values.role === 'Buyer'} onChange={formik.handleChange}/>
+                                Buyer
+                            </label>
+                        </div>
+                    </div>
+        
     
                     <div className="flex flex-col relative">
                         <label htmlFor="password" className="text-gray-900 font-semibold mb-2 flex justify-between">
@@ -62,12 +120,18 @@ const Register = () => {
                         <input
                         type="password"
                         id="password"
+                        name='password'
+                        onChange={formik.handleChange}
+                        value={formik.values.password}
                         className="border border-gray-300 rounded-xl py-3 px-4 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-800"
                         />
                     </div>
+                    {formik.errors.role && formik.touched.role && (
+                        <div style={{ color: 'red' }}>{formik.errors.role}</div>
+                    )}
                 </div>
                 <div className='w-full flex flex-col gap-4'>
-                    <button className='w-full rounded-full bg-black text-white text-sm font-bold py-4'>
+                    <button className='w-full rounded-full bg-black text-white text-sm font-bold py-4' type='submit'>
                         Sign Up
                     </button>
                     <p className='m-auto text-sm w-fit'>
@@ -75,7 +139,7 @@ const Register = () => {
                         <Link to="/login" className='underline'>Sign in</Link>
                     </p>
                 </div>
-            </div>
+            </form>
         </div>
       )
 }

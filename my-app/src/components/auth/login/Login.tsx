@@ -1,17 +1,14 @@
 import React from 'react';
 import classes from '../Login.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
-import { div } from 'framer-motion/client';
+import { div } from 'framer-motion/client';1
 import farmers_image from './farmers_grinding.jpeg';
 import farmer_happy from './farmer_happy.jpeg';
 import { useAuthContext } from '../../../contexts/AuthContext';
 import {useFormik} from "formik"
+import { LoginValues } from '../../../@types/auth-service';
 
 
-interface LoginValues {
-    username: string;
-    password: string;
-}
 
 const Login = () => {
 
@@ -32,13 +29,13 @@ const Login = () => {
                 navigate("/");
             }
         }
-    })
+    });
 
     return (
         <div className='h-screen flex justify-center items-center'>
             <img src={farmer_happy} alt="Farmer Happy" className='h-full w-[600px] rounded-r-xl object-cover'/>
             <form className='py-4 px-6 w-[480px] bg-white rounded-3xl flex flex-col gap-8 m-auto ' onSubmit={formik.handleSubmit}>
-                <h2 className='text-2xl font-semibold'>Sign in to Alsat</h2>
+                <h2 className='text-xl font-semibold'>Sign in to Alsat</h2>
                 <button className='bg-white py-4 px-4 rounded-3xl text-sm font-semibold flex justify-center items-center gap-4  border-2'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" role="img" className="icon">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M17.64 9.20419C17.64 8.56601 17.5827 7.95237 17.4764 7.36328H9V10.8446H13.8436C13.635 11.9696 13.0009 12.9228 12.0477 13.561V15.8192H14.9564C16.6582 14.2524 17.64 11.9451 17.64 9.20419Z" fill="#4285F4"></path>
@@ -52,7 +49,7 @@ const Login = () => {
                 <div className="flex flex-col space-y-6 w-full">
                     <div className="flex flex-col">
                         <label htmlFor="username" className="text-gray-900 font-semibold mb-2">
-                            Username or Email
+                            Email
                         </label>
                         <input
                             type="text"
@@ -66,7 +63,7 @@ const Login = () => {
                     <div className="flex flex-col relative">
                         <label htmlFor="password" className="text-gray-900 font-semibold mb-2 flex justify-between">
                             Password
-                            <Link to="password_reset" className="underline text-sm relative top-[2px] font-normal">Forgot?</Link>
+                            <Link to="/password-reset" className="underline text-sm relative top-[2px] font-normal">Forgot?</Link>
                         </label>
                         <input
                             type="password"

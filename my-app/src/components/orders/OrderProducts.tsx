@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 interface OrderProduct {
   id: number;
   name: string;
@@ -60,11 +60,20 @@ const TABLE_HEADS = [
     "Unit",
     "Category",
     "Subtotal",
+    "Status"
 ];
 
-const OrderProducts = () => {
+function sum(data){
+  const orderItemSum = data.reduce((acc,cur)=>parseInt(cur.product_total_price)+acc, 0);
+  return orderItemSum;
+}
+
+const OrderProducts = ({orderItems}) => {
+
+    console.log(orderItems)
     return (
-        <div className="mx-auto mt-8">
+      <>
+        {orderItems.length>0 && <div className="mx-auto mt-8">
           <div className="mb-4">
             <h4 className="text-2xl font-semibold">Order Details</h4>
             <p className="text-gray-600">
@@ -86,38 +95,45 @@ const OrderProducts = () => {
                 </tr>
               </thead>
               <tbody>
-                {order.products.map((product) => (
-                  <tr key={product.id} className="border-b hover:bg-gray-50">
+                {orderItems.map((order) => (
+                  <tr key={order.order_item_id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-2 flex items-center">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-10 h-10 rounded-full mr-3"
-                      />
-                      {product.name}
+                      <Link to={`/products/${order.product}`}>
+                        <img
+                          src={order.product_image}
+                          alt={order.product_name}
+                          className="w-10 h-10 rounded-full mr-3"
+                        />
+                        {order.product_name}
+                      </Link>
                     </td>
-                    <td className="px-4 py-2">{product.description}</td>
-                    <td className="px-4 py-2">${product.price.toFixed(2)}</td>
-                    <td className="px-4 py-2">{product.quantityOrdered}</td>
-                    <td className="px-4 py-2">{product.unit}</td>
-                    <td className="px-4 py-2">{product.category}</td>
+                    <td className="px-4 py-2">{order.product_description}</td>
+                    <td className="px-4 py-2">{order.product_price}</td>
+                    <td className="px-4 py-2">{order.quantity}</td>
+                    <td className="px-4 py-2">{order.product_unit}</td>
+                    <td className="px-4 py-2">{order.product_category}</td>
                     <td className="px-4 py-2">
-                      ${(product.price * product.quantityOrdered).toFixed(2)}
+                      {order.product_total_price}
+                    </td>
+                    <td className="px-4 py-2">
+                      {order.status}
                     </td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
                 <tr>
-                  <td className="px-4 py-2 font-semibold text-right" colSpan={6}>Total:</td>
+                  <td className="px-4 py-2 font-semibold text-right" colSpan={6}>{`Total: ${sum(orderItems)}`}</td>
                   <td className="px-4 py-2 font-semibold">
-                    ${order.products.reduce((total, product) => total + product.price * product.quantityOrdered, 0).toFixed(2)}
+                    {/* ${order.products.reduce((total, product) => total + product.price * product.quantityOrdered, 0).toFixed(2)} */}
                   </td>
                 </tr>
               </tfoot>
             </table>
           </div>
-        </div>
+        </div>}
+        {orderItems.length===0 && <p>No items.</p>}
+      </>
     );
 };
 
